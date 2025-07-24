@@ -1,0 +1,42 @@
+{
+  "short_name": "Legal AI",
+  "name": "Legal AI Document Assistant",
+  "description": "AI-powered legal document analysis and assistance for law firms",
+  "icons": [
+    {
+      "src": "/icon-192.png",
+      "type": "image/png",
+      "sizes": "192x192",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/icon-512.png",
+      "type": "image/png",
+      "sizes": "512x512",
+      "purpose": "any maskable"
+    }
+  ],
+  "start_url": "/",
+  "background_color": "#1e40af",
+  "display": "standalone",
+  "scope": "/",
+  "theme_color": "#1e40af",
+  "categories": ["productivity", "business"],
+  "shortcuts": [
+    {
+      "name": "Upload Document",
+      "short_name": "Upload",
+      "description": "Upload a new legal document",
+      "url": "/?view=upload",
+      "icons": [{ "src": "/upload-icon.png", "sizes": "96x96" }]
+    },
+    {
+      "name": "Chat with AI",
+      "short_name": "Chat",
+      "description": "Start AI analysis",
+      "url": "/?view=chat",
+      "icons": [{ "src": "/chat-icon.png", "sizes": "96x96" }]
+    }
+  ],
+  "prefer_related_applications": false
+}

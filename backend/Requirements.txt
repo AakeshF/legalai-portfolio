@@ -1,0 +1,86 @@
+# Core Framework
+fastapi==0.104.1
+uvicorn[standard]==0.24.0
+gunicorn==21.2.0
+
+# Database
+sqlalchemy==2.0.23
+alembic==1.12.1
+psycopg2-binary==2.9.9
+asyncpg==0.29.0
+
+# Authentication & Security
+python-jose[cryptography]==3.3.0
+passlib[bcrypt]==1.7.4
+python-multipart==0.0.6
+cryptography==41.0.7
+pyotp==2.9.0
+qrcode==7.4.2
+
+# API & Validation
+pydantic==2.5.0
+pydantic-settings==2.1.0
+email-validator==2.1.0
+
+# Document Processing
+PyPDF2==3.0.1
+python-docx==1.1.0
+Pillow==10.1.0
+python-magic==0.4.27
+
+# AI Services (Local)
+httpx==0.25.2  # For Ollama API calls
+aiohttp==3.9.1  # For async HTTP client
+
+# Caching & Session Management (Optional)
+# redis==5.0.1  # Uncomment if using Redis locally
+# python-redis-lock==4.0.0
+
+# Email Services
+fastapi-mail==1.4.1
+jinja2==3.1.2
+
+# Monitoring & Logging (Local Only)
+python-json-logger==3.3.0
+psutil==5.9.8
+
+# Rate Limiting & Security
+slowapi==0.1.9
+secure==0.3.0
+
+# Local Storage Only (no cloud dependencies)
+
+# Database Migrations & Backup
+# pg-backup-api==0.2.0  # Not available on PyPI
+
+# Production Server
+gevent==23.9.1
+
+# Environment Management
+python-dotenv==1.0.0
+
+# CORS
+fastapi-cors==0.0.6
+
+# Health Checks
+py-healthcheck==1.10.1
+
+# Task Queue (Optional for background jobs)
+# celery==5.3.4  # Uncomment if needed
+
+# Time Zone Support
+pytz==2023.3
+
+# Production Optimizations
+orjson==3.9.10  # Fast JSON parsing
+
+# Semantic Search & RAG
+sentence-transformers==2.3.1
+langchain==0.1.0
+langchain-community==0.1.0
+tiktoken==0.5.2
+chromadb==0.4.22  # Alternative to pgvector
+pgvector==0.2.4  # PostgreSQL vector extension Python client
+numpy==1.24.3
+torch==2.1.2  # For embeddings (CPU version)
+transformers==4.36.2  # For legal-BERT models

@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Error Test</title>
+</head>
+<body>
+    <h1>Testing Frontend Errors</h1>
+    <iframe src="http://localhost:5173" width="100%" height="600"></iframe>
+    <script>
+        // Check for errors
+        setTimeout(() => {
+            fetch('http://localhost:5173/src/main.tsx')
+                .then(r => r.text())
+                .then(text => console.log('Main.tsx loaded:', text.length))
+                .catch(err => console.error('Failed to load main.tsx:', err));
+        }, 1000);
+    </script>
+</body>
+</html>

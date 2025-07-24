@@ -1,0 +1,86 @@
+# .dockerignore - Files to exclude from Docker build context
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+ENV/
+.venv
+pip-log.txt
+pip-delete-this-directory.txt
+.pytest_cache/
+.coverage
+.coverage.*
+htmlcov/
+.tox/
+.nox/
+*.cover
+*.log
+.git
+.mypy_cache
+.pytest_cache
+.hypothesis
+
+# Virtual environments
+venv/
+env/
+ENV/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.project
+.classpath
+.settings/
+
+# OS
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Project specific
+uploads/*
+!uploads/.gitkeep
+logs/*
+!logs/.gitkeep
+*.db
+*.db-journal
+*.sqlite
+*.sqlite3
+.env
+.env.local
+.env.*.local
+
+# Documentation
+*.md
+!README.md
+!CLAUDE.md
+docs/
+
+# Testing
+test_*.py
+tests/
+coverage/
+.coverage
+
+# Build artifacts
+dist/
+build/
+*.egg-info/
+
+# Development files
+*.bak
+*.tmp
+*.temp
+migrations/versions/*
+!migrations/versions/.gitkeep

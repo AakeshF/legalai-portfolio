@@ -1,0 +1,71 @@
+NON-DISCLOSURE AGREEMENT
+
+This Non-Disclosure Agreement ("Agreement") is entered into as of February 1, 2024, between:
+
+DISCLOSING PARTY:
+Innovation Labs Corporation
+789 Research Boulevard
+Boston, MA 02110
+("Discloser")
+
+RECEIVING PARTY:
+Venture Partners LLC
+321 Investment Street
+San Francisco, CA 94111
+("Recipient")
+
+WHEREAS, Discloser possesses certain confidential and proprietary information relating to its revolutionary AI technology platform; and
+
+WHEREAS, Recipient desires to receive such information for the purpose of evaluating a potential investment opportunity;
+
+NOW, THEREFORE, in consideration of the mutual covenants and agreements contained herein, the parties agree as follows:
+
+1. DEFINITION OF CONFIDENTIAL INFORMATION
+"Confidential Information" means all information, whether written, oral, or visual, disclosed by Discloser to Recipient, including but not limited to:
+- Technical specifications and architecture
+- Business plans and financial projections
+- Customer lists and market analyses
+- Trade secrets and know-how
+- Any information marked as "Confidential"
+
+2. OBLIGATIONS OF RECIPIENT
+Recipient agrees to:
+a) Hold all Confidential Information in strict confidence
+b) Not disclose Confidential Information to any third parties
+c) Use Confidential Information solely for evaluation purposes
+d) Protect Confidential Information with the same degree of care used for its own confidential information, but no less than reasonable care
+e) Limit access to employees and advisors with a legitimate need to know
+
+3. EXCLUSIONS
+This Agreement does not apply to information that:
+a) Was publicly known at the time of disclosure
+b) Becomes publicly known through no fault of Recipient
+c) Was rightfully known by Recipient prior to disclosure
+d) Is independently developed by Recipient without use of Confidential Information
+e) Is required to be disclosed by law or court order
+
+4. TERM
+This Agreement shall remain in effect for three (3) years from the date first written above.
+
+5. RETURN OF INFORMATION
+Upon request by Discloser, Recipient shall promptly return or destroy all Confidential Information and certify such return or destruction in writing.
+
+6. NO LICENSE
+Nothing in this Agreement grants Recipient any rights or licenses to Confidential Information except as expressly set forth herein.
+
+7. REMEDIES
+Recipient acknowledges that breach of this Agreement may cause irreparable harm to Discloser, entitling Discloser to seek injunctive relief in addition to all other legal remedies.
+
+8. GOVERNING LAW
+This Agreement shall be governed by the laws of Massachusetts, without regard to conflict of law principles.
+
+9. ENTIRE AGREEMENT
+This Agreement constitutes the entire understanding between the parties concerning the subject matter hereof and supersedes all prior agreements and understandings.
+
+IN WITNESS WHEREOF, the parties have executed this Agreement as of the date first written above.
+
+INNOVATION LABS CORPORATION          VENTURE PARTNERS LLC
+
+_______________________             _______________________
+Sarah Johnson, CTO                  Michael Chen, Managing Partner
+Date: February 1, 2024             Date: February 1, 2024

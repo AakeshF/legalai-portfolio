@@ -1,0 +1,33 @@
+SECURITY AUDIT - Backend Secrets Removal
+Date: 2025-06-18
+Task: TASK-BE-001
+
+HARDCODED SECRETS FOUND AND REMOVED:
+
+1. config.py:
+   - Line 19: deepseek_api_key = "sk-56fe0d5e45b84a559cf5fc92e41c9b8c" [REMOVED]
+   - Line 43-44: secret_key/JWT_SECRET_KEY = "your-secret-key-change-in-production" [REMOVED]
+   - Line 49: ENCRYPTION_KEY = "oJn3xOTp_y72ReNmCi18mRIY6yxY6cwL_QlKAXlOTPg=" [REMOVED]
+
+2. populate_default_data.py:
+   - Line 43, 55, 106: Admin password = "admin123" [NEEDS FIXING]
+   - Line 61, 73, 107: Attorney password = "attorney123" [NEEDS FIXING]
+
+3. demo_ai_backend_config.py:
+   - Line 12-13: ADMIN_EMAIL/PASSWORD hardcoded [NEEDS FIXING]
+
+4. services/api_key_manager.py:
+   - Line 69: salt=b'legal-ai-salt' [NEEDS FIXING]
+
+ACTIONS TAKEN:
+✓ Replaced config.py with secure version using environment variables
+✓ Created .env.example template for documentation
+✓ Created development .env file with generated secure keys
+✓ Verified .gitignore excludes .env files
+
+NEXT STEPS:
+- Clean git history to remove exposed secrets (TASK-BE-002)
+- Fix hardcoded passwords in populate_default_data.py
+- Update demo_ai_backend_config.py to use env vars
+- Fix hardcoded salt in api_key_manager.py
+- Implement proper authentication middleware (TASK-BE-003)

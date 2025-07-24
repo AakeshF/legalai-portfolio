@@ -1,0 +1,18 @@
+# Security and encryption dependencies
+cryptography==41.0.7
+pyotp==2.9.0
+qrcode==7.4.2
+redis==5.0.1
+
+# File validation
+python-magic==0.4.27
+yara-python==4.3.1
+pyclamd==0.4.0
+
+# Monitoring
+psutil==5.9.8
+pythonjsonlogger==2.0.7
+
+# Geographic restrictions (optional)
+geoip2==4.8.0
+maxminddb==2.4.0

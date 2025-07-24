@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+
+{% block title %}Welcome to Legal AI Assistant{% endblock %}
+
+{% block content %}
+<h2 style="color: #1a237e; margin-top: 0;">Welcome to Legal AI Assistant, {{ user_name }}!</h2>
+
+<p>We're excited to have you join <strong>{{ organization }}</strong> on our platform. Legal AI Assistant is designed to help legal professionals like you save time and improve accuracy in document analysis.</p>
+
+<div class="alert alert-info">
+    <strong>🚀 Getting Started:</strong> Your account has been successfully created. You can now access all the features of Legal AI Assistant.
+</div>
+
+<h3>What You Can Do:</h3>
+<ul class="features-list">
+    <li>Upload and analyze legal documents in seconds</li>
+    <li>Extract key clauses and identify potential risks</li>
+    <li>Get AI-powered insights and recommendations</li>
+    <li>Collaborate with your team securely</li>
+    <li>Search across all your documents instantly</li>
+</ul>
+
+<div style="text-align: center; margin: 30px 0;">
+    <a href="{{ login_url }}" class="button">Log In to Get Started</a>
+</div>
+
+<h3>Need Help?</h3>
+<p>Our support team is here to help you get the most out of Legal AI Assistant:</p>
+<ul>
+    <li>📧 Email: <a href="mailto:{{ support_email }}">{{ support_email }}</a></li>
+    <li>📚 Documentation: <a href="{{ frontend_url }}/docs">View Guides</a></li>
+    <li>🎓 Training: <a href="{{ frontend_url }}/training">Schedule a Demo</a></li>
+</ul>
+
+<p style="margin-top: 30px;">
+    Best regards,<br>
+    The Legal AI Assistant Team
+</p>
+{% endblock %}
