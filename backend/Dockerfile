@@ -1,5 +1,5 @@
 # Dockerfile for Legal AI Backend - Production Optimized
-FROM python:3.11-slim as builder
+FROM python:3.13-slim as builder
 
 # Install system dependencies
 RUN apt-get update && apt-get install -y \
@@ -33,7 +33,7 @@ RUN pip install --no-cache-dir -r requirements.txt || \
 COPY requirements-ml.txt* ./
 
 # Production image
-FROM python:3.11-slim
+FROM python:3.13-slim
 
 # Install runtime dependencies only
 RUN apt-get update && apt-get install -y \
