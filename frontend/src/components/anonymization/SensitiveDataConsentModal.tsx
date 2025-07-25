@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { AlertTriangle, Shield, Lock, Info, CheckCircle, X } from 'lucide-react';
+import { AlertTriangle, Shield, Lock, Info, CheckCircle, X, ChevronDown } from 'lucide-react';
 import { RedactedSegment } from '../../types/anonymization';
 
 interface SensitiveDataConsentModalProps {
@@ -9,7 +9,7 @@ interface SensitiveDataConsentModalProps {
   detectedSensitiveTypes: string[];
   segments: RedactedSegment[];
   model: string;
-  isAIProviderDemo?: boolean;
+  isDeepSeekDemo?: boolean;
 }
 
 interface ConsentData {
@@ -53,7 +53,7 @@ export const SensitiveDataConsentModal: React.FC<SensitiveDataConsentModalProps>
   detectedSensitiveTypes,
   segments,
   model,
-  isAIProviderDemo = false
+  isDeepSeekDemo = false
 }) => {
   const [consent, setConsent] = useState<ConsentData>({
     clientAuthorized: false,
@@ -131,14 +131,14 @@ export const SensitiveDataConsentModal: React.FC<SensitiveDataConsentModalProps>
             </div>
           </div>
 
-          {isAIProviderDemo && (
+          {isDeepSeekDemo && (
             <div className="p-4 bg-blue-50 border border-blue-200 rounded-lg">
               <div className="flex items-start gap-3">
                 <Lock className="w-5 h-5 text-blue-600 mt-0.5" />
                 <div>
                   <p className="font-medium text-blue-900">Demo Mode Restrictions</p>
                   <p className="text-sm text-blue-700 mt-1">
-                    [AI Provider] demo mode only accepts pre-defined placeholder prompts. 
+                    DeepSeek demo mode only accepts pre-defined placeholder prompts. 
                     Your actual data will not be sent to the AI model.
                   </p>
                 </div>

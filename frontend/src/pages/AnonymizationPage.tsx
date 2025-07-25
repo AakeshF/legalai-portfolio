@@ -6,7 +6,7 @@ import {
   UserSubmissionHistory,
   PromptReviewStatus,
   SensitiveDataConsentModal,
-  [AI Provider]DemoMode,
+  DeepSeekDemoMode,
   detectSensitiveData
 } from '../components/anonymization';
 import { useAuth } from '../contexts/AuthContext';
@@ -24,7 +24,7 @@ export const AnonymizationPage: React.FC = () => {
     segments: RedactedSegment[];
   } | null>(null);
   const [submissionStatus, setSubmissionStatus] = useState<string | null>(null);
-  const [is[AI Provider]Demo, setIs[AI Provider]Demo] = useState(false);
+  const [isDeepSeekDemo, setIsDeepSeekDemo] = useState(false);
   
   const [settings, setSettings] = useState<AnonymizationSettingsType>({
     autoRedactionEnabled: true,
@@ -125,10 +125,10 @@ export const AnonymizationPage: React.FC = () => {
 
   const handleModelChange = (model: string) => {
     setSelectedModel(model);
-    setIs[AI Provider]Demo(model === '[ai-provider]-demo');
+    setIsDeepSeekDemo(model === '[ai-provider]-demo');
   };
 
-  const handle[AI Provider]PromptSelect = (prompt: string) => {
+  const handleDeepSeekPromptSelect = (prompt: string) => {
     setPromptValue(prompt);
   };
 
@@ -181,9 +181,9 @@ export const AnonymizationPage: React.FC = () => {
             />
           )}
 
-          {is[AI Provider]Demo ? (
+          {isDeepSeekDemo ? (
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              <[AI Provider]DemoMode onSelectPrompt={handle[AI Provider]PromptSelect} />
+              <DeepSeekDemoMode onSelectPrompt={handleDeepSeekPromptSelect} />
               <div>
                 <PromptAnonymizer
                   value={promptValue}
@@ -237,7 +237,7 @@ export const AnonymizationPage: React.FC = () => {
           detectedSensitiveTypes={Array.from(new Set(pendingSubmission.segments.map(s => s.type)))}
           segments={pendingSubmission.segments}
           model={selectedModel}
-          is[AI Provider]Demo={is[AI Provider]Demo}
+          isDeepSeekDemo={isDeepSeekDemo}
         />
       )}
     </div>

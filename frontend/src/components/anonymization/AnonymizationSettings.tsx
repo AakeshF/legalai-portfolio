@@ -275,7 +275,7 @@ export const AnonymizationSettings: React.FC<AnonymizationSettingsProps> = ({
                   {model.name} ({model.provider})
                 </option>
               ))}
-              <option value="[ai-provider]-demo">[AI Provider] Demo (Limited)</option>
+              <option value="[ai-provider]-demo">DeepSeek Demo (Limited)</option>
             </select>
           </div>
         )}

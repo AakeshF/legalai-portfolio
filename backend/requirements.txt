@@ -66,7 +66,8 @@ fastapi-cors==0.0.6
 py-healthcheck==1.10.1
 
 # Task Queue (Optional for background jobs)
-# celery==5.3.4  # Uncomment if needed
+celery==5.3.4
+redis==5.0.1
 
 # Time Zone Support
 pytz==2023.3
@@ -84,3 +85,7 @@ pgvector==0.2.4  # PostgreSQL vector extension Python client
 numpy==1.24.3
 torch==2.1.2  # For embeddings (CPU version)
 transformers==4.36.2  # For legal-BERT models
+
+# NLP
+spacy==3.7.2
+en-core-web-sm @ https://github.com/explosion/spacy-models/releases/download/en_core_web_sm-3.7.0/en_core_web_sm-3.7.0-py3-none-any.whl

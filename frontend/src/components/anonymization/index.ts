@@ -5,7 +5,7 @@ export { PromptReviewStatus } from './PromptReviewStatus';
 export { UserSubmissionHistory } from './UserSubmissionHistory';
 export { AdminReviewDashboard } from './AdminReviewDashboard';
 export { SensitiveDataConsentModal } from './SensitiveDataConsentModal';
-export { [AI Provider]DemoMode } from './[AI Provider]DemoMode';
+export { DeepSeekDemoMode } from './DeepSeekDemoMode';
 export { SecurityAuditLog } from './SecurityAuditLog';
 export { APIKeyManager } from './APIKeyManager';
 export { UsageTracking } from './UsageTracking';

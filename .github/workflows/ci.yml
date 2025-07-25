@@ -107,7 +107,7 @@ jobs:
     - name: Check coverage threshold
       run: |
         cd backend
-        coverage report --fail-under=70 || true  # Starting at 70%, target 80%
+        coverage report --fail-under=70  # Starting at 70%, target 80%
 
   frontend-tests:
     name: Frontend Tests
@@ -131,17 +131,17 @@ jobs:
     - name: Run linting
       run: |
         cd frontend
-        npm run lint || true  # Don't fail on lint warnings initially
+        npm run lint
     
     - name: Run type checking
       run: |
         cd frontend
-        npm run type-check || true  # Don't fail on type errors initially
+        npm run type-check
     
     - name: Run tests
       run: |
         cd frontend
-        npm run test:ci || npm test || true  # Fallback if test:ci not configured
+        npm run test:ci || npm test  # Fallback if test:ci not configured
     
     - name: Build application
       run: |
@@ -241,8 +241,10 @@ jobs:
     
     - name: Run integration tests
       run: |
-        # Add integration test commands here
-        echo "Integration tests would run here"
+        # Basic health check integration tests
+        curl -f http://localhost:8000/health || exit 1
+        curl -f http://localhost:3000 || exit 1
+        # Add more integration tests as needed
     
     - name: Stop services
       if: always()
