@@ -2,7 +2,8 @@
 # test_auth_with_middleware.py - Test auth with middleware
 
 import sys
-sys.path.append('.')
+
+sys.path.append(".")
 
 from fastapi import FastAPI
 from fastapi.testclient import TestClient
@@ -39,23 +40,21 @@ app.include_router(auth_router)
 # Create test client
 client = TestClient(app)
 
+
 def test_login():
     """Test the login endpoint with middleware"""
     print("Testing login endpoint with middleware...")
-    
+
     try:
         response = client.post(
             "/api/auth/login",
-            json={
-                "email": "[email@example.com]",
-                "password": "testpassword123"
-            }
+            json={"email": "[email@example.com]", "password": "testpassword123"},
         )
-        
+
         print(f"Status code: {response.status_code}")
         print(f"Headers: {dict(response.headers)}")
         print(f"Response: {response.text[:500]}...")  # First 500 chars
-        
+
         if response.status_code == 500:
             # Try to get more details
             try:
@@ -63,11 +62,13 @@ def test_login():
                 print(f"Error details: {error}")
             except:
                 pass
-                
+
     except Exception as e:
         print(f"Exception during test: {e}")
         import traceback
+
         traceback.print_exc()
+
 
 if __name__ == "__main__":
     test_login()

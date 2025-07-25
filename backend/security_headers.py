@@ -9,13 +9,14 @@ import logging
 
 logger = logging.getLogger(__name__)
 
+
 class SecurityHeadersMiddleware(BaseHTTPMiddleware):
     """Middleware to add security headers to all responses"""
-    
+
     def __init__(self, app, config: Optional[Dict] = None):
         super().__init__(app)
         self.config = config or {}
-        
+
         # Default security headers
         self.security_headers = {
             "X-Content-Type-Options": "nosniff",
@@ -25,30 +26,32 @@ class SecurityHeadersMiddleware(BaseHTTPMiddleware):
             "Permissions-Policy": "geolocation=(), microphone=(), camera=(), payment=()",
             "X-Permitted-Cross-Domain-Policies": "none",
             "X-DNS-Prefetch-Control": "off",
-            "X-Download-Options": "noopen"
+            "X-Download-Options": "noopen",
         }
-        
+
         # HSTS header for HTTPS
         if self.config.get("ssl_enabled", True):
-            self.security_headers["Strict-Transport-Security"] = "max-age=31536000; includeSubDomains; preload"
-        
+            self.security_headers["Strict-Transport-Security"] = (
+                "max-age=31536000; includeSubDomains; preload"
+            )
+
         # CSP nonce for inline scripts
         self.csp_nonce = None
-    
+
     async def dispatch(self, request: Request, call_next):
         # Generate CSP nonce for this request
         self.csp_nonce = secrets.token_urlsafe(16)
-        
+
         # Add nonce to request state for use in templates
         request.state.csp_nonce = self.csp_nonce
-        
+
         # Process request
         response = await call_next(request)
-        
+
         # Add security headers
         for header, value in self.security_headers.items():
             response.headers[header] = value
-        
+
         # Add Content-Security-Policy with nonce
         csp_directives = [
             "default-src 'self'",
@@ -60,75 +63,85 @@ class SecurityHeadersMiddleware(BaseHTTPMiddleware):
             "frame-ancestors 'none'",
             "base-uri 'self'",
             "form-action 'self'",
-            "upgrade-insecure-requests"
+            "upgrade-insecure-requests",
         ]
-        
+
         response.headers["Content-Security-Policy"] = "; ".join(csp_directives)
-        
+
         # Add security info header (custom)
         response.headers["X-Security-Policy"] = "Legal-AI-Security-v1"
-        
+
         return response
+
 
 class CORSSecurityMiddleware(BaseHTTPMiddleware):
     """Enhanced CORS middleware with security checks"""
-    
-    def __init__(self, app, allowed_origins: List[str], allowed_methods: List[str] = None):
+
+    def __init__(
+        self, app, allowed_origins: List[str], allowed_methods: List[str] = None
+    ):
         super().__init__(app)
         self.allowed_origins = allowed_origins
-        self.allowed_methods = allowed_methods or ["GET", "POST", "PUT", "DELETE", "OPTIONS"]
-    
+        self.allowed_methods = allowed_methods or [
+            "GET",
+            "POST",
+            "PUT",
+            "DELETE",
+            "OPTIONS",
+        ]
+
     async def dispatch(self, request: Request, call_next):
         origin = request.headers.get("origin")
-        
+
         # Check if origin is allowed
         if origin and origin not in self.allowed_origins:
             logger.warning(f"Blocked CORS request from unauthorized origin: {origin}")
-            return Response(
-                content="CORS policy violation",
-                status_code=403
-            )
-        
+            return Response(content="CORS policy violation", status_code=403)
+
         response = await call_next(request)
-        
+
         # Add CORS headers for allowed origins
         if origin in self.allowed_origins:
             response.headers["Access-Control-Allow-Origin"] = origin
             response.headers["Access-Control-Allow-Credentials"] = "true"
-            response.headers["Access-Control-Allow-Methods"] = ", ".join(self.allowed_methods)
-            response.headers["Access-Control-Allow-Headers"] = "Content-Type, Authorization, X-Requested-With"
+            response.headers["Access-Control-Allow-Methods"] = ", ".join(
+                self.allowed_methods
+            )
+            response.headers["Access-Control-Allow-Headers"] = (
+                "Content-Type, Authorization, X-Requested-With"
+            )
             response.headers["Access-Control-Max-Age"] = "86400"  # 24 hours
-        
+
         return response
+
 
 class SSLRedirectMiddleware(BaseHTTPMiddleware):
     """Middleware to redirect HTTP to HTTPS in production"""
-    
+
     def __init__(self, app, enabled: bool = True):
         super().__init__(app)
         self.enabled = enabled
-    
+
     async def dispatch(self, request: Request, call_next):
         # Skip for health checks
         if request.url.path in ["/health", "/health/live"]:
             return await call_next(request)
-        
+
         # Check if request is not HTTPS
         if self.enabled and request.url.scheme == "http":
             # Don't redirect for localhost
             if request.url.hostname not in ["localhost", "127.0.0.1"]:
                 https_url = request.url.replace(scheme="https")
                 return Response(
-                    content="",
-                    status_code=301,
-                    headers={"Location": str(https_url)}
+                    content="", status_code=301, headers={"Location": str(https_url)}
                 )
-        
+
         return await call_next(request)
+
 
 class RequestIntegrityMiddleware(BaseHTTPMiddleware):
     """Middleware to verify request integrity for sensitive operations"""
-    
+
     def __init__(self, app, secret_key: str):
         super().__init__(app)
         self.secret_key = secret_key
@@ -136,9 +149,9 @@ class RequestIntegrityMiddleware(BaseHTTPMiddleware):
             "/api/documents/upload",
             "/api/organization/users",
             "/api/auth/password",
-            "/api/billing"
+            "/api/billing",
         ]
-    
+
     async def dispatch(self, request: Request, call_next):
         # Check if endpoint needs integrity verification
         if any(request.url.path.startswith(ep) for ep in self.protected_endpoints):
@@ -148,26 +161,22 @@ class RequestIntegrityMiddleware(BaseHTTPMiddleware):
                 # Read body for verification (be careful with large files)
                 body = await request.body()
                 expected_signature = self._calculate_signature(
-                    request.method,
-                    str(request.url),
-                    body
+                    request.method, str(request.url), body
                 )
-                
+
                 if signature != expected_signature:
                     logger.warning(f"Invalid request signature for {request.url.path}")
                     return Response(
-                        content="Invalid request signature",
-                        status_code=403
+                        content="Invalid request signature", status_code=403
                     )
-        
+
         return await call_next(request)
-    
+
     def _calculate_signature(self, method: str, url: str, body: bytes) -> str:
         """Calculate HMAC signature for request"""
         message = f"{method}:{url}:{body.decode('utf-8', errors='ignore')}"
-        return hashlib.sha256(
-            f"{self.secret_key}:{message}".encode()
-        ).hexdigest()
+        return hashlib.sha256(f"{self.secret_key}:{message}".encode()).hexdigest()
+
 
 # Nginx configuration for SSL/TLS
 def generate_nginx_ssl_config() -> str:

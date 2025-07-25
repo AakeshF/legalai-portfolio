@@ -39,7 +39,7 @@ class SystemHealthResponse(BaseModel):
 
 class UsageStatisticsResponse(BaseModel):
     model_config = {"protected_namespaces": ()}
-    
+
     period: Dict[str, str]
     summary: Dict[str, Any]
     model_usage: List[Dict[str, Any]]
@@ -51,24 +51,27 @@ class UsageStatisticsResponse(BaseModel):
 async def process_ai_request(
     request: IntegratedAIRequest,
     db: Session = Depends(get_db),
-    current_user: User = Depends(get_current_user)
+    current_user: User = Depends(get_current_user),
 ):
     """
     Process an AI request through the complete security pipeline
     """
     # Validate session if provided
     if request.session_id:
-        session = db.query(ChatSession).filter(
-            ChatSession.id == request.session_id,
-            ChatSession.organization_id == current_user.organization_id
-        ).first()
-        
+        session = (
+            db.query(ChatSession)
+            .filter(
+                ChatSession.id == request.session_id,
+                ChatSession.organization_id == current_user.organization_id,
+            )
+            .first()
+        )
+
         if not session:
             raise HTTPException(
-                status_code=status.HTTP_404_NOT_FOUND,
-                detail="Chat session not found"
+                status_code=status.HTTP_404_NOT_FOUND, detail="Chat session not found"
             )
-    
+
     # Process request
     result = await integrated_ai_assistant.process_request(
         prompt=request.prompt,
@@ -78,9 +81,9 @@ async def process_ai_request(
         session_id=request.session_id,
         document_ids=request.document_ids,
         preferred_model=request.preferred_model,
-        context=request.context
+        context=request.context,
     )
-    
+
     # Handle different statuses
     if result["status"] == "blocked":
         raise HTTPException(
@@ -88,18 +91,17 @@ async def process_ai_request(
             detail={
                 "message": result["message"],
                 "reasons": result.get("reasons", []),
-                "classification": result.get("classification")
-            }
+                "classification": result.get("classification"),
+            },
         )
-    
+
     return IntegratedAIResponse(**result)
 
 
 # Health check endpoint
 @router.get("/health", response_model=SystemHealthResponse)
 async def check_system_health(
-    db: Session = Depends(get_db),
-    current_user: User = Depends(get_current_user)
+    db: Session = Depends(get_db), current_user: User = Depends(get_current_user)
 ):
     """Check health of all integrated AI components"""
     health = await integrated_ai_assistant.check_system_health(db)
@@ -112,14 +114,14 @@ async def get_usage_statistics(
     start_date: Optional[datetime] = None,
     end_date: Optional[datetime] = None,
     db: Session = Depends(get_db),
-    current_user: User = Depends(get_current_user)
+    current_user: User = Depends(get_current_user),
 ):
     """Get AI usage statistics for the organization"""
     stats = await integrated_ai_assistant.get_usage_statistics(
         db=db,
         org_id=current_user.organization_id,
         start_date=start_date,
-        end_date=end_date
+        end_date=end_date,
     )
     return stats
 
@@ -129,15 +131,15 @@ async def get_usage_statistics(
 async def process_batch_requests(
     requests: List[IntegratedAIRequest],
     db: Session = Depends(get_db),
-    current_user: User = Depends(get_current_user)
+    current_user: User = Depends(get_current_user),
 ):
     """Process multiple AI requests in batch"""
     if len(requests) > 10:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Maximum 10 requests allowed in batch"
+            detail="Maximum 10 requests allowed in batch",
         )
-    
+
     results = []
     for req in requests:
         try:
@@ -149,20 +151,22 @@ async def process_batch_requests(
                 session_id=req.session_id,
                 document_ids=req.document_ids,
                 preferred_model=req.preferred_model,
-                context=req.context
+                context=req.context,
             )
             results.append(result)
         except Exception as e:
-            results.append({
-                "status": "error",
-                "message": str(e),
-                "prompt": req.prompt[:50] + "..."
-            })
-    
+            results.append(
+                {
+                    "status": "error",
+                    "message": str(e),
+                    "prompt": req.prompt[:50] + "...",
+                }
+            )
+
     return {
         "total": len(requests),
         "successful": sum(1 for r in results if r["status"] == "success"),
-        "results": results
+        "results": results,
     }
 
 
@@ -171,27 +175,28 @@ async def process_batch_requests(
 async def create_chat_session(
     session_name: Optional[str] = None,
     db: Session = Depends(get_db),
-    current_user: User = Depends(get_current_user)
+    current_user: User = Depends(get_current_user),
 ):
     """Create a new chat session"""
     import uuid
-    
+
     session = ChatSession(
         id=str(uuid.uuid4()),
-        session_name=session_name or f"Session {datetime.utcnow().strftime('%Y-%m-%d %H:%M')}",
+        session_name=session_name
+        or f"Session {datetime.utcnow().strftime('%Y-%m-%d %H:%M')}",
         organization_id=current_user.organization_id,
         user_id=current_user.id,
         created_at=datetime.utcnow(),
-        last_activity=datetime.utcnow()
+        last_activity=datetime.utcnow(),
     )
-    
+
     db.add(session)
     db.commit()
-    
+
     return {
         "session_id": session.id,
         "session_name": session.session_name,
-        "created_at": session.created_at.isoformat()
+        "created_at": session.created_at.isoformat(),
     }
 
 
@@ -200,26 +205,34 @@ async def get_session_history(
     session_id: str,
     limit: int = 50,
     db: Session = Depends(get_db),
-    current_user: User = Depends(get_current_user)
+    current_user: User = Depends(get_current_user),
 ):
     """Get chat history for a session"""
     # Verify session ownership
-    session = db.query(ChatSession).filter(
-        ChatSession.id == session_id,
-        ChatSession.organization_id == current_user.organization_id
-    ).first()
-    
+    session = (
+        db.query(ChatSession)
+        .filter(
+            ChatSession.id == session_id,
+            ChatSession.organization_id == current_user.organization_id,
+        )
+        .first()
+    )
+
     if not session:
         raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="Session not found"
+            status_code=status.HTTP_404_NOT_FOUND, detail="Session not found"
         )
-    
+
     from models import ChatMessage
-    messages = db.query(ChatMessage).filter(
-        ChatMessage.session_id == session_id
-    ).order_by(ChatMessage.timestamp.desc()).limit(limit).all()
-    
+
+    messages = (
+        db.query(ChatMessage)
+        .filter(ChatMessage.session_id == session_id)
+        .order_by(ChatMessage.timestamp.desc())
+        .limit(limit)
+        .all()
+    )
+
     return {
         "session_id": session_id,
         "session_name": session.session_name,
@@ -230,10 +243,10 @@ async def get_session_history(
                 "content": msg.content,
                 "timestamp": msg.timestamp.isoformat(),
                 "model_used": msg.model_used,
-                "processing_time": msg.processing_time
+                "processing_time": msg.processing_time,
             }
             for msg in reversed(messages)  # Return in chronological order
-        ]
+        ],
     }
 
 
@@ -243,34 +256,33 @@ async def update_model_preferences(
     provider: Optional[str] = None,
     model: Optional[str] = None,
     db: Session = Depends(get_db),
-    current_user: User = Depends(get_current_user)
+    current_user: User = Depends(get_current_user),
 ):
     """Update user's AI model preferences"""
     if provider:
         current_user.ai_provider_preference = provider
-    
+
     if model and provider:
         if not current_user.ai_model_preferences:
             current_user.ai_model_preferences = {}
         current_user.ai_model_preferences[provider] = model
-    
+
     db.commit()
-    
+
     return {
         "status": "success",
         "provider_preference": current_user.ai_provider_preference,
-        "model_preferences": current_user.ai_model_preferences
+        "model_preferences": current_user.ai_model_preferences,
     }
 
 
 @router.get("/preferences/model")
 async def get_model_preferences(
-    db: Session = Depends(get_db),
-    current_user: User = Depends(get_current_user)
+    db: Session = Depends(get_db), current_user: User = Depends(get_current_user)
 ):
     """Get user's AI model preferences"""
     return {
         "provider_preference": current_user.ai_provider_preference,
         "model_preferences": current_user.ai_model_preferences or {},
-        "available_providers": ["openai", "claude", "gemini"]
+        "available_providers": ["openai", "claude", "gemini"],
     }

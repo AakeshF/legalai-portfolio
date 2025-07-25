@@ -16,7 +16,7 @@ router = APIRouter(prefix="/api/prompts", tags=["prompts"])
 # Pydantic models
 class PromptSubmitRequest(BaseModel):
     model_config = {"protected_namespaces": ()}
-    
+
     prompt: str = Field(..., min_length=1)
     model_requested: Optional[str] = None
     context: Optional[Dict[str, Any]] = None
@@ -45,7 +45,7 @@ class PromptStatusResponse(BaseModel):
 
 class PromptHistoryItem(BaseModel):
     model_config = {"protected_namespaces": (), "from_attributes": True}
-    
+
     id: int
     original_prompt: str
     status: str
@@ -60,11 +60,11 @@ class PromptHistoryItem(BaseModel):
 async def submit_prompt(
     request: PromptSubmitRequest,
     db: Session = Depends(get_db),
-    current_user: User = Depends(get_current_user)
+    current_user: User = Depends(get_current_user),
 ):
     """Submit a prompt for processing"""
     processor = PromptProcessor()
-    
+
     try:
         result = await processor.process_prompt(
             prompt=request.prompt,
@@ -72,9 +72,9 @@ async def submit_prompt(
             user_id=current_user.id,
             org_id=current_user.organization_id,
             model_requested=request.model_requested,
-            context=request.context
+            context=request.context,
         )
-        
+
         return PromptSubmitResponse(
             prompt_id=result["prompt_id"],
             status=result["status"],
@@ -83,13 +83,12 @@ async def submit_prompt(
             estimated_wait_time=result.get("estimated_wait_time"),
             processed_prompt=result.get("processed_prompt"),
             requires_consent=result.get("requires_consent", False),
-            consent_details=result.get("consent_details")
+            consent_details=result.get("consent_details"),
         )
     except Exception as e:
         logger.error(f"Error submitting prompt: {e}")
         raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail=str(e)
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e)
         )
 
 
@@ -97,23 +96,20 @@ async def submit_prompt(
 async def get_prompt_status(
     prompt_id: int,
     db: Session = Depends(get_db),
-    current_user: User = Depends(get_current_user)
+    current_user: User = Depends(get_current_user),
 ):
     """Get the status of a submitted prompt"""
     processor = PromptProcessor()
-    
+
     result = await processor.get_prompt_status(
-        prompt_id=prompt_id,
-        db=db,
-        user_id=current_user.id
+        prompt_id=prompt_id, db=db, user_id=current_user.id
     )
-    
+
     if "error" in result:
         raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail=result["error"]
+            status_code=status.HTTP_404_NOT_FOUND, detail=result["error"]
         )
-    
+
     return PromptStatusResponse(**result)
 
 
@@ -125,13 +121,11 @@ async def get_prompt_history(
     date_from: Optional[datetime] = None,
     date_to: Optional[datetime] = None,
     db: Session = Depends(get_db),
-    current_user: User = Depends(get_current_user)
+    current_user: User = Depends(get_current_user),
 ):
     """Get user's prompt history"""
-    query = db.query(PromptLog).filter(
-        PromptLog.user_id == current_user.id
-    )
-    
+    query = db.query(PromptLog).filter(PromptLog.user_id == current_user.id)
+
     # Apply filters
     if status_filter:
         query = query.filter(PromptLog.status == status_filter)
@@ -139,10 +133,12 @@ async def get_prompt_history(
         query = query.filter(PromptLog.created_at >= date_from)
     if date_to:
         query = query.filter(PromptLog.created_at <= date_to)
-    
+
     # Order by newest first
-    prompts = query.order_by(PromptLog.created_at.desc()).offset(offset).limit(limit).all()
-    
+    prompts = (
+        query.order_by(PromptLog.created_at.desc()).offset(offset).limit(limit).all()
+    )
+
     return prompts
 
 
@@ -155,11 +151,11 @@ async def get_pending_prompts(
     date_from: Optional[datetime] = None,
     date_to: Optional[datetime] = None,
     db: Session = Depends(get_db),
-    current_user: User = Depends(require_admin)
+    current_user: User = Depends(require_admin),
 ):
     """Get prompts awaiting review (admin only)"""
     service = AdminReviewService()
-    
+
     filters = {}
     if priority:
         filters["priority"] = priority
@@ -171,12 +167,12 @@ async def get_pending_prompts(
         filters["date_from"] = date_from
     if date_to:
         filters["date_to"] = date_to
-    
+
     return await service.get_pending_prompts(
         db=db,
         org_id=current_user.organization_id,
         admin_id=current_user.id,
-        filters=filters
+        filters=filters,
     )
 
 
@@ -186,23 +182,20 @@ async def assign_prompt_for_review(
     queue_id: int,
     assign_to_id: Optional[str] = None,
     db: Session = Depends(get_db),
-    current_user: User = Depends(require_admin)
+    current_user: User = Depends(require_admin),
 ):
     """Assign a prompt to an admin for review"""
     service = AdminReviewService()
-    
+
     try:
         return await service.assign_prompt(
             db=db,
             queue_id=queue_id,
             admin_id=current_user.id,
-            assign_to_id=assign_to_id
+            assign_to_id=assign_to_id,
         )
     except ValueError as e:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail=str(e)
-        )
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))
 
 
 @router.post("/admin/{prompt_id}/approve")
@@ -211,24 +204,21 @@ async def approve_prompt(
     edited_prompt: Optional[str] = None,
     notes: Optional[str] = None,
     db: Session = Depends(get_db),
-    current_user: User = Depends(require_admin)
+    current_user: User = Depends(require_admin),
 ):
     """Approve a prompt with optional edits"""
     service = AdminReviewService()
-    
+
     try:
         return await service.approve_prompt(
             db=db,
             prompt_id=prompt_id,
             admin_id=current_user.id,
             edited_prompt=edited_prompt,
-            notes=notes
+            notes=notes,
         )
     except ValueError as e:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail=str(e)
-        )
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))
 
 
 @router.post("/admin/{prompt_id}/reject")
@@ -237,53 +227,50 @@ async def reject_prompt(
     reason: str,
     notes: Optional[str] = None,
     db: Session = Depends(get_db),
-    current_user: User = Depends(require_admin)
+    current_user: User = Depends(require_admin),
 ):
     """Reject a prompt with reason"""
     service = AdminReviewService()
-    
+
     try:
         return await service.reject_prompt(
             db=db,
             prompt_id=prompt_id,
             admin_id=current_user.id,
             reason=reason,
-            notes=notes
+            notes=notes,
         )
     except ValueError as e:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail=str(e)
-        )
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))
 
 
 class FlagPromptRequest(BaseModel):
-    flag_type: str = Field(..., pattern="^(security_concern|compliance_issue|needs_escalation|other)$")
+    flag_type: str = Field(
+        ..., pattern="^(security_concern|compliance_issue|needs_escalation|other)$"
+    )
     details: Optional[str] = None
+
 
 @router.post("/admin/{prompt_id}/flag")
 async def flag_prompt(
     prompt_id: int,
     request: FlagPromptRequest,
     db: Session = Depends(get_db),
-    current_user: User = Depends(require_admin)
+    current_user: User = Depends(require_admin),
 ):
     """Flag a prompt for special attention"""
     service = AdminReviewService()
-    
+
     try:
         return await service.flag_prompt(
             db=db,
             prompt_id=prompt_id,
             admin_id=current_user.id,
             flag_type=request.flag_type,
-            details=request.details
+            details=request.details,
         )
     except ValueError as e:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail=str(e)
-        )
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))
 
 
 @router.get("/admin/analytics")
@@ -291,16 +278,13 @@ async def get_review_analytics(
     date_from: Optional[datetime] = None,
     date_to: Optional[datetime] = None,
     db: Session = Depends(get_db),
-    current_user: User = Depends(require_admin)
+    current_user: User = Depends(require_admin),
 ):
     """Get analytics and statistics for prompt reviews"""
     service = AdminReviewService()
-    
+
     return await service.get_analytics(
-        db=db,
-        org_id=current_user.organization_id,
-        date_from=date_from,
-        date_to=date_to
+        db=db, org_id=current_user.organization_id, date_from=date_from, date_to=date_to
     )
 
 
@@ -313,34 +297,32 @@ active_connections: Dict[str, List[WebSocket]] = {}
 
 @router.websocket("/ws/{prompt_id}")
 async def websocket_prompt_status(
-    websocket: WebSocket,
-    prompt_id: int,
-    db: Session = Depends(get_db)
+    websocket: WebSocket, prompt_id: int, db: Session = Depends(get_db)
 ):
     """WebSocket endpoint for real-time prompt status updates"""
     await websocket.accept()
-    
+
     # Add to active connections
     if prompt_id not in active_connections:
         active_connections[prompt_id] = []
     active_connections[prompt_id].append(websocket)
-    
+
     try:
         while True:
             # Wait for any message from client (keep-alive)
             await websocket.receive_text()
-            
+
             # Send current status
-            prompt = db.query(PromptLog).filter(
-                PromptLog.id == prompt_id
-            ).first()
-            
+            prompt = db.query(PromptLog).filter(PromptLog.id == prompt_id).first()
+
             if prompt:
-                await websocket.send_json({
-                    "prompt_id": prompt_id,
-                    "status": prompt.status.value,
-                    "timestamp": datetime.utcnow().isoformat()
-                })
+                await websocket.send_json(
+                    {
+                        "prompt_id": prompt_id,
+                        "status": prompt.status.value,
+                        "timestamp": datetime.utcnow().isoformat(),
+                    }
+                )
     except WebSocketDisconnect:
         # Remove from active connections
         active_connections[prompt_id].remove(websocket)
@@ -354,11 +336,13 @@ async def notify_prompt_status_change(prompt_id: int, new_status: str):
     if prompt_id in active_connections:
         for websocket in active_connections[prompt_id]:
             try:
-                await websocket.send_json({
-                    "prompt_id": prompt_id,
-                    "status": new_status,
-                    "timestamp": datetime.utcnow().isoformat()
-                })
+                await websocket.send_json(
+                    {
+                        "prompt_id": prompt_id,
+                        "status": new_status,
+                        "timestamp": datetime.utcnow().isoformat(),
+                    }
+                )
             except:
                 # Connection might be closed
                 pass

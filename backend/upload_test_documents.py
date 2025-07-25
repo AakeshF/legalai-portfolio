@@ -49,10 +49,10 @@ In case of termination without cause, Employee shall receive 3 months severance 
 Any disputes shall be resolved through binding arbitration in accordance with 
 state law.
 
-This Agreement constitutes the entire understanding between the parties."""
+This Agreement constitutes the entire understanding between the parties.""",
     },
     {
-        "filename": "service_agreement.txt", 
+        "filename": "service_agreement.txt",
         "content": """SERVICE AGREEMENT
 
 This Service Agreement ("Agreement") is made between ClientCo LLC ("Client") 
@@ -93,7 +93,7 @@ in accordance with industry standards.
 
 8. INDEMNIFICATION
 Each party shall indemnify the other against third-party claims arising 
-from their negligence or breach."""
+from their negligence or breach.""",
     },
     {
         "filename": "nda_agreement.txt",
@@ -143,38 +143,37 @@ Unauthorized disclosure may result in:
 - Loss of competitive advantage
 - Legal liability
 - Damage to business relationships
-- Financial losses"""
-    }
+- Financial losses""",
+    },
 ]
+
 
 def upload_documents():
     """Upload test documents to the system"""
-    
+
     # Create uploads directory if it doesn't exist
     upload_dir = Path("uploads")
     upload_dir.mkdir(exist_ok=True)
-    
+
     for doc in test_documents:
         print(f"\nUploading {doc['filename']}...")
-        
+
         # Save to file
-        file_path = upload_dir / doc['filename']
-        with open(file_path, 'w') as f:
-            f.write(doc['content'])
-        
+        file_path = upload_dir / doc["filename"]
+        with open(file_path, "w") as f:
+            f.write(doc["content"])
+
         # Upload via API
-        with open(file_path, 'rb') as f:
-            files = {'file': (doc['filename'], f, 'text/plain')}
-            
+        with open(file_path, "rb") as f:
+            files = {"file": (doc["filename"], f, "text/plain")}
+
             # Since auth is disabled for test endpoints, we'll use a simple upload
             response = requests.post(
                 f"{BASE_URL}/api/documents/upload",
                 files=files,
-                headers={
-                    "X-Organization-ID": "dev-org-id"
-                }
+                headers={"X-Organization-ID": "dev-org-id"},
             )
-            
+
             if response.status_code == 200:
                 result = response.json()
                 print(f"✅ Uploaded successfully: {result.get('id')}")
@@ -182,52 +181,52 @@ def upload_documents():
                 print(f"❌ Upload failed: {response.status_code}")
                 print(f"   {response.text}")
 
+
 def test_search():
     """Test semantic search after upload"""
     print("\n\nTesting semantic search...")
-    
+
     queries = [
         "termination clauses",
-        "confidentiality obligations", 
+        "confidentiality obligations",
         "payment terms",
         "liability limitations",
-        "intellectual property rights"
+        "intellectual property rights",
     ]
-    
+
     for query in queries:
         print(f"\n🔍 Searching for: {query}")
         response = requests.post(
-            f"{BASE_URL}/api/test/semantic-search",
-            params={"query": query, "top_k": 3}
+            f"{BASE_URL}/api/test/semantic-search", params={"query": query, "top_k": 3}
         )
-        
+
         if response.status_code == 200:
             results = response.json()
             print(f"   Found {results['total']} results")
-            for i, result in enumerate(results['results'][:3]):
+            for i, result in enumerate(results["results"][:3]):
                 print(f"   {i+1}. Score: {result.get('relevance_score', 0):.3f}")
                 print(f"      {result.get('content', '')[:100]}...")
         else:
             print(f"   ❌ Search failed: {response.text}")
 
+
 def test_rag():
     """Test RAG chat after upload"""
     print("\n\nTesting RAG chat...")
-    
+
     questions = [
         "What are the termination conditions in the employment agreement?",
         "What are the payment terms in the service agreement?",
         "What happens if someone breaches the NDA?",
-        "What are the main risks mentioned in these contracts?"
+        "What are the main risks mentioned in these contracts?",
     ]
-    
+
     for question in questions:
         print(f"\n💬 Question: {question}")
         response = requests.post(
-            f"{BASE_URL}/api/test/rag-chat",
-            json={"message": question}
+            f"{BASE_URL}/api/test/rag-chat", json={"message": question}
         )
-        
+
         if response.status_code == 200:
             result = response.json()
             print(f"   Answer: {result.get('response', 'No response')[:200]}...")
@@ -236,22 +235,24 @@ def test_rag():
         else:
             print(f"   ❌ RAG failed: {response.text}")
 
+
 if __name__ == "__main__":
     print("📄 Legal AI Document Upload & Test Script")
     print("=" * 50)
-    
+
     # First upload documents
     upload_documents()
-    
+
     # Wait a bit for processing
     import time
+
     print("\n⏳ Waiting for document processing...")
     time.sleep(5)
-    
+
     # Test search
     test_search()
-    
+
     # Test RAG
     test_rag()
-    
+
     print("\n✅ Testing complete!")
