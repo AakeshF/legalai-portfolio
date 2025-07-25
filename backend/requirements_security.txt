@@ -2,7 +2,7 @@
 cryptography==41.0.7
 pyotp==2.9.0
 qrcode==7.4.2
-redis==5.0.1
+redis==6.2.0
 
 # File validation
 python-magic==0.4.27
