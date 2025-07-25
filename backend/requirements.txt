@@ -33,7 +33,7 @@ httpx==0.25.2  # For Ollama API calls
 aiohttp==3.9.1  # For async HTTP client
 
 # Caching & Session Management (Optional)
-# redis==5.0.1  # Uncomment if using Redis locally
+# redis==6.2.0  # Uncomment if using Redis locally
 # python-redis-lock==4.0.0
 
 # Email Services
@@ -67,7 +67,7 @@ py-healthcheck==1.10.1
 
 # Task Queue (Optional for background jobs)
 celery==5.3.4
-redis==5.0.1
+redis==6.2.0
 
 # Time Zone Support
 pytz==2023.3
