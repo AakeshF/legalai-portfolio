@@ -10,7 +10,7 @@ import { chatService } from '../../services/chat.service';
 import { websocketService } from '../../services/websocket.service';
 import type { AIProvider } from '../ai-config/types';
 import { AI_PROVIDERS, AI_MODELS } from '../ai-config/types';
-import { Toast } from '../Toast';
+import { useToast } from '../Toast';
 import { useIntegratedAnonymization } from '../../hooks/useIntegratedAnonymization';
 import { SensitiveDataConsentModal } from '../anonymization/SensitiveDataConsentModal';
 import { detectSensitiveData } from '../anonymization/SensitiveDataDetector';
