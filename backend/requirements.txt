@@ -73,7 +73,7 @@ redis==5.0.1
 pytz==2023.3
 
 # Production Optimizations
-orjson==3.9.10  # Fast JSON parsing
+orjson==3.9.14  # Fast JSON parsing
 
 # Semantic Search & RAG
 langchain==0.2.16
