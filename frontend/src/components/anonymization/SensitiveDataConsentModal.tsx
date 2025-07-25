@@ -9,7 +9,7 @@ interface SensitiveDataConsentModalProps {
   detectedSensitiveTypes: string[];
   segments: RedactedSegment[];
   model: string;
-  is[AI Provider]Demo?: boolean;
+  isAIProviderDemo?: boolean;
 }
 
 interface ConsentData {
@@ -53,7 +53,7 @@ export const SensitiveDataConsentModal: React.FC<SensitiveDataConsentModalProps>
   detectedSensitiveTypes,
   segments,
   model,
-  is[AI Provider]Demo = false
+  isAIProviderDemo = false
 }) => {
   const [consent, setConsent] = useState<ConsentData>({
     clientAuthorized: false,
@@ -131,7 +131,7 @@ export const SensitiveDataConsentModal: React.FC<SensitiveDataConsentModalProps>
             </div>
           </div>
 
-          {is[AI Provider]Demo && (
+          {isAIProviderDemo && (
             <div className="p-4 bg-blue-50 border border-blue-200 rounded-lg">
               <div className="flex items-start gap-3">
                 <Lock className="w-5 h-5 text-blue-600 mt-0.5" />
