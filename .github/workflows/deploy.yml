@@ -40,8 +40,10 @@ jobs:
         tags: |
           ghcr.io/aakeshf/legalai-portfolio-backend:latest
           ghcr.io/aakeshf/legalai-portfolio-backend:${{ github.sha }}
-        cache-from: type=registry,ref=ghcr.io/aakeshf/legalai-portfolio-backend:buildcache
-        cache-to: type=registry,ref=ghcr.io/aakeshf/legalai-portfolio-backend:buildcache,mode=max
+        cache-from: type=gha
+        cache-to: type=gha,mode=max
+        build-args: |
+          BUILDKIT_PROGRESS=plain
     
     - name: Build and push frontend
       uses: docker/build-push-action@v5
@@ -51,8 +53,10 @@ jobs:
         tags: |
           ghcr.io/aakeshf/legalai-portfolio-frontend:latest
           ghcr.io/aakeshf/legalai-portfolio-frontend:${{ github.sha }}
-        cache-from: type=registry,ref=ghcr.io/aakeshf/legalai-portfolio-frontend:buildcache
-        cache-to: type=registry,ref=ghcr.io/aakeshf/legalai-portfolio-frontend:buildcache,mode=max
+        cache-from: type=gha
+        cache-to: type=gha,mode=max
+        build-args: |
+          BUILDKIT_PROGRESS=plain
     
     - name: Deploy to production
       if: false  # Enable when server details are available

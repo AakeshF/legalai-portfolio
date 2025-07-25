@@ -76,16 +76,12 @@ pytz==2023.3
 orjson==3.9.10  # Fast JSON parsing
 
 # Semantic Search & RAG
-sentence-transformers==2.3.1
 langchain==0.2.16
 langchain-community==0.2.16
 tiktoken==0.5.2
 chromadb==0.4.22  # Alternative to pgvector
 pgvector==0.2.4  # PostgreSQL vector extension Python client
 numpy==1.24.3
-torch==2.1.2  # For embeddings (CPU version)
-transformers==4.36.2  # For legal-BERT models
 
-# NLP
-spacy==3.7.2
-en-core-web-sm @ https://github.com/explosion/spacy-models/releases/download/en_core_web_sm-3.7.0/en_core_web_sm-3.7.0-py3-none-any.whl
+# Note: Heavy ML dependencies moved to requirements-ml.txt
+# Install with: pip install -r requirements-ml.txt

@@ -20,8 +20,17 @@ COPY requirements.txt .
 # Create virtual environment and install dependencies
 RUN python -m venv /opt/venv
 ENV PATH="/opt/venv/bin:$PATH"
-RUN pip install --upgrade pip setuptools wheel
-RUN pip install --no-cache-dir -r requirements.txt
+
+# Upgrade pip and install build tools
+RUN pip install --no-cache-dir --upgrade pip setuptools wheel
+
+# Install base requirements with retry logic
+RUN pip install --no-cache-dir -r requirements.txt || \
+    (sleep 5 && pip install --no-cache-dir -r requirements.txt) || \
+    (sleep 10 && pip install --no-cache-dir -r requirements.txt)
+
+# Copy ML requirements but don't install by default
+COPY requirements-ml.txt* ./
 
 # Production image
 FROM python:3.11-slim
