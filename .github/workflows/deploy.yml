@@ -61,7 +61,7 @@ jobs:
     
     - name: Deploy to production
       if: false  # Enable when server details are available
-      uses: appleboy/ssh-action@v1.0.0
+      uses: appleboy/ssh-action@v1.2.2
       with:
         host: ${{ secrets.PRODUCTION_HOST }}
         username: ${{ secrets.PRODUCTION_USER }}
