@@ -29,7 +29,7 @@ Pillow==10.1.0
 python-magic==0.4.27
 
 # AI Services (Local)
-httpx==0.25.2  # For Ollama API calls
+httpx==0.28.1  # For Ollama API calls
 aiohttp==3.9.1  # For async HTTP client
 
 # Caching & Session Management (Optional)
